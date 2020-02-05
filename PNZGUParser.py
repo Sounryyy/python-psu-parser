@@ -3,10 +3,12 @@ from selenium import webdriver
 
 class PNZGUParser(object):
 
-    def __init__(self):
+    def __init__(self, login, password):
 
         self.driver = webdriver.Chrome('/Users/justtrueserjdev/Downloads/chromedriver')
         self.output_file = open('output.txt', 'w')
+        self.login = login
+        self.password = password
 
     def start(self):
 
@@ -34,8 +36,8 @@ class PNZGUParser(object):
 
             lk_button.click()
 
-            login_field.send_keys('s517658187')
-            password_field.send_keys('HzrYKkCB')
+            login_field.send_keys(self.login)
+            password_field.send_keys(self.password)
 
             authorization_button.click()
 
