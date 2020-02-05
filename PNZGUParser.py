@@ -4,14 +4,21 @@ from selenium import webdriver
 class PNZGUParser(object):
 
     def __init__(self):
-        self.driver = webdriver.Chrome('/Users/justtrueserjdev/Downloads/chromedriver')
 
-    def parse(self):
+        self.driver = webdriver.Chrome('/Users/justtrueserjdev/Downloads/chromedriver')
+        self.output_file = open('output.txt', 'w')
+
+    def start(self):
+
         self.login_in_PNZGU()
         self.go_to_lk()
         self.parse_h1()
 
+    def save_in_file(self, text):
+        self.output_file.write(text)
+
     def login_in_PNZGU(self):
+
         self.driver.get("https://www.pnzgu.ru/")
 
         lk_button = self.driver.find_element_by_class_name("link-btn-lk")
@@ -27,7 +34,12 @@ class PNZGUParser(object):
         authorization_button.click()
 
     def go_to_lk(self):
+
         self.driver.get("https://lk.pnzgu.ru/portfolio/my")
 
     def parse_h1(self):
-        tryS = self.driver.find_element_by_tag_name('h1')
+
+        parsed_h1 = self.driver.find_element_by_tag_name('h1').text
+
+        self.save_in_file(parsed_h1)
+

@@ -3,7 +3,7 @@ from PNZGUParser import PNZGUParser
 
 def main():
     parser = PNZGUParser()
-    parser.parse()
+    parser.start()
 
 
 if __name__ == "__main__":
