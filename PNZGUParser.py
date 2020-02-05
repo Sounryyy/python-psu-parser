@@ -10,28 +10,34 @@ class PNZGUParser(object):
 
     def start(self):
 
+        self.open_PNZGU()
         self.login_in_PNZGU()
         self.go_to_lk()
         self.parse_h1()
 
+    def open_PNZGU(self):
+
+        self.driver.get("https://www.pnzgu.ru/")
+
     def save_in_file(self, text):
+
         self.output_file.write(text)
 
     def login_in_PNZGU(self):
 
-        self.driver.get("https://www.pnzgu.ru/")
-
         lk_button = self.driver.find_element_by_class_name("link-btn-lk")
-        login_field = self.driver.find_element_by_name('name')
-        password_field = self.driver.find_element_by_name('password')
-        authorization_button = self.driver.find_element_by_name('login')
 
-        lk_button.click()
+        if lk_button.text == 'Личный кабинет':
+            login_field = self.driver.find_element_by_name('name')
+            password_field = self.driver.find_element_by_name('password')
+            authorization_button = self.driver.find_element_by_name('login')
 
-        login_field.send_keys('s517658187')
-        password_field.send_keys('HzrYKkCB')
+            lk_button.click()
 
-        authorization_button.click()
+            login_field.send_keys('s517658187')
+            password_field.send_keys('HzrYKkCB')
+
+            authorization_button.click()
 
     def go_to_lk(self):
 
