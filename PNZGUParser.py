@@ -1,4 +1,5 @@
 from selenium import webdriver
+import time
 
 from helpers import create_file
 
@@ -38,6 +39,7 @@ class PNZGUParser(object):
     def start_parsing_cycle(self):
         self.open_portfolio_employers_page()
         employers_dict = self.get_all_employers_dict_from_page()
+
         #   Добавить цикл прохода по словарю и для каждого элемента с задержкой вызвать обработку
         self.parse_employer('123647508')
 
@@ -61,6 +63,7 @@ class PNZGUParser(object):
         employer_data = self.get_employer_data()
 
         create_file(string_id, employer_data)
+        time.sleep(3)
 
     def open_employer_rating(self, string_id):
         self.driver.get(f"https://lk.pnzgu.ru/rating/{string_id}")
