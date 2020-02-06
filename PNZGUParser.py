@@ -39,6 +39,8 @@ class PNZGUParser(object):
     def start_parsing_cycle(self):
         self.open_portfolio_employers_page()
         employers_dict = self.get_all_employers_dict_from_page()
+        #   Добавить цикл прохода по словарю и для каждого элемента с задержкой вызвать обработку
+        self.parse_employer('123647508')
 
     def open_portfolio_employers_page(self):
         self.driver.get("https://lk.pnzgu.ru/portfolio/empl/p/" + str(self.page_number))
@@ -54,11 +56,35 @@ class PNZGUParser(object):
             employers_dict[employer_id] = employer_type
 
         return employers_dict
-    # def parse_h1(self):
-    #
-    #     parsed_h1 = self.driver.find_element_by_tag_name('h1').text
-    #
-    #     create_file(123, [[123]])
+
+    def parse_employer(self, string_id):
+        self.open_employer_rating(string_id)
+        employer_data = self.get_employer_data()
+
+        create_file(string_id, employer_data)
+
+    def open_employer_rating(self, string_id):
+        self.driver.get(f"https://lk.pnzgu.ru/rating/{string_id}")
+
+    def get_employer_data(self):
+        employer_data = []
+
+        cells_list = self.get_cells_list_from_table()
+
+        for cell in cells_list:
+            employer_data.append(self.get_indicator_and_value(cell))
+
+        return employer_data
+
+    def get_cells_list_from_table(self):
+        table = self.driver.find_element_by_tag_name('tbody')
+
+        return table.find_elements_by_tag_name('tr')
+
+    def get_indicator_and_value(self, cell):
+        indicator, value, *other_elements = cell.find_elements_by_tag_name('td')
+
+        return [indicator.text, value.text]
 
 # План -
 # 1) Взять всех эмплоеров
