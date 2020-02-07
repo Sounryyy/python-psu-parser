@@ -1,6 +1,5 @@
 from selenium import webdriver
-
-from helpers import create_file
+import csv
 
 
 class PNZGUParser(object):
@@ -69,7 +68,7 @@ class PNZGUParser(object):
         self.open_employer_rating(string_id)
         employer_data = self.get_employer_data()
 
-        create_file(string_id, employer_data)
+        self.create_file(string_id, employer_data)
 
     def open_employer_rating(self, string_id):
         self.driver.get(f"https://lk.pnzgu.ru/rating/{string_id}")
@@ -94,3 +93,8 @@ class PNZGUParser(object):
 
         return [indicator.text, value.text]
 
+    def create_file(self, file_name, data):
+        file = open(f"{file_name}.csv", 'w')
+        with file:
+            writer = csv.writer(file)
+            writer.writerows(data)
