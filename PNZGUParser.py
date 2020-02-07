@@ -1,16 +1,15 @@
 from selenium import webdriver
-import time
 
 from helpers import create_file
 
 
 class PNZGUParser(object):
 
-    def __init__(self, config):
+    def __init__(self, config, page_number):
         self.login = config['login']
-        self.driver = webdriver.Chrome('/Users/justtrueserjdev/Downloads/chromedriver')
+        self.driver = webdriver.Chrome(config['webdriver_link'])
         self.password = config['password']
-        self.page_number = 1
+        self.page_number = page_number
         self.pages_amount = config['pages_amount']
         self.is_need_parse_employers_with_student_card = config['is_need_parse_employers_with_student_card']
 
@@ -44,11 +43,7 @@ class PNZGUParser(object):
         for employer in employers_dict:
             self.parse_employer(employer)
 
-        self.page_number += 1
-
-        if self.page_number != self.pages_amount:
-            self.start_parsing_cycle()
-    #   Добавить цикл прохода по словарю и для каждого элемента с задержкой вызвать обработку
+        print('done')
 
     def open_portfolio_employers_page(self):
         self.driver.get("https://lk.pnzgu.ru/portfolio/empl/p/" + str(self.page_number))
@@ -61,7 +56,12 @@ class PNZGUParser(object):
         for employer in employers:
             employer_type = employer.find_element_by_tag_name('img').get_attribute('title')
             employer_id = employer.find_element_by_tag_name('a').get_attribute('href').split('/')[-1]
-            employers_dict[employer_id] = employer_type
+
+            if self.is_need_parse_employers_with_student_card:
+                employers_dict[employer_id] = employer_type
+
+            if not self.is_need_parse_employers_with_student_card and employer_type == 'Личная карточка сотрудника':
+                employers_dict[employer_id] = employer_type
 
         return employers_dict
 
@@ -70,7 +70,6 @@ class PNZGUParser(object):
         employer_data = self.get_employer_data()
 
         create_file(string_id, employer_data)
-        time.sleep(3)
 
     def open_employer_rating(self, string_id):
         self.driver.get(f"https://lk.pnzgu.ru/rating/{string_id}")
@@ -95,9 +94,3 @@ class PNZGUParser(object):
 
         return [indicator.text, value.text]
 
-# План -
-# 1) Взять всех эмплоеров
-# 2) Из каждого достать учащийся / ученик
-# 3) Вынести все айдишники с hrefa в словарь id : личная...
-# 4) Переход на рейтинг
-# 5) Парсинг рейтинга
