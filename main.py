@@ -2,11 +2,14 @@ from PNZGUParser import PNZGUParser
 
 
 def main():
-    login = 's517658187'
-    password = 'HzrYKkCB'
-    is_need_parse_employers_with_student_card = True
+    config = {
+        'login': 's517658187',
+        'password': 'HzrYKkCB',
+        'pages_amount': 3,
+        'is_need_parse_employers_with_student_card': True,
+    }
 
-    parser = PNZGUParser(login, password, is_need_parse_employers_with_student_card)
+    parser = PNZGUParser(config)
     parser.start()
 
 
