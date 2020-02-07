@@ -6,12 +6,13 @@ from helpers import create_file
 
 class PNZGUParser(object):
 
-    def __init__(self, login, password, is_need_parse_employers_with_student_card):
-        self.login = login
+    def __init__(self, config):
+        self.login = config['login']
         self.driver = webdriver.Chrome('/Users/justtrueserjdev/Downloads/chromedriver')
-        self.password = password
+        self.password = config['password']
         self.page_number = 1
-        self.is_need_parse_employers_with_student_card = is_need_parse_employers_with_student_card
+        self.pages_amount = config['pages_amount']
+        self.is_need_parse_employers_with_student_card = config['is_need_parse_employers_with_student_card']
 
     def start(self):
         self.open_PNZGU()
@@ -40,8 +41,14 @@ class PNZGUParser(object):
         self.open_portfolio_employers_page()
         employers_dict = self.get_all_employers_dict_from_page()
 
-        #   Добавить цикл прохода по словарю и для каждого элемента с задержкой вызвать обработку
-        self.parse_employer('123647508')
+        for employer in employers_dict:
+            self.parse_employer(employer)
+
+        self.page_number += 1
+
+        if self.page_number != self.pages_amount:
+            self.start_parsing_cycle()
+    #   Добавить цикл прохода по словарю и для каждого элемента с задержкой вызвать обработку
 
     def open_portfolio_employers_page(self):
         self.driver.get("https://lk.pnzgu.ru/portfolio/empl/p/" + str(self.page_number))
