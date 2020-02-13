@@ -5,8 +5,11 @@ import csv
 class PNZGUParser(object):
 
     def __init__(self, config, page_number):
-        self.login = config['login']
+        options = webdriver.ChromeOptions()
+        options.add_argument('headless')
+        self.skip = 'skip'
         self.driver = webdriver.Chrome(config['webdriver_link'])
+        self.login = config['login']
         self.password = config['password']
         self.page_number = page_number
         self.pages_amount = config['pages_amount']
@@ -68,7 +71,8 @@ class PNZGUParser(object):
         self.open_employer_rating(string_id)
         employer_data = self.get_employer_data()
 
-        self.create_file(string_id, employer_data)
+        if employer_data != self.skip:
+            self.create_file(string_id, employer_data)
 
     def open_employer_rating(self, string_id):
         self.driver.get(f"https://lk.pnzgu.ru/rating/{string_id}")
@@ -79,7 +83,12 @@ class PNZGUParser(object):
         cells_list = self.get_cells_list_from_table()
 
         for cell in cells_list:
-            employer_data.append(self.get_indicator_and_value(cell))
+            field = self.get_indicator_and_value(cell)
+
+            if field == self.skip:
+                return self.skip
+
+            employer_data.append(field)
 
         return employer_data
 
@@ -90,6 +99,9 @@ class PNZGUParser(object):
 
     def get_indicator_and_value(self, cell):
         indicator, value, *other_elements = cell.find_elements_by_tag_name('td')
+
+        if indicator.text == 'Итого:' and value.text == '0/0':
+            return self.skip
 
         return [indicator.text, value.text]
 
