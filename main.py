@@ -22,7 +22,6 @@ def start_threads(page_number, amount):
     for thread_number in range(amount):
         thread = threading.Thread(target=main, args=(config, page_number + thread_number))
         thread.start()
-        print('started')
 
 
 if __name__ == "__main__":
@@ -49,5 +48,4 @@ if __name__ == "__main__":
             pageNumber += 3
 
         time.sleep(165)
-        print('ждем')
-    print('stop')
+
