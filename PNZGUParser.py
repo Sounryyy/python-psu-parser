@@ -8,7 +8,7 @@ class PNZGUParser(object):
         options = webdriver.ChromeOptions()
         options.add_argument('headless')
         self.skip = 'skip'
-        self.driver = webdriver.Chrome(config['webdriver_link'])
+        self.driver = webdriver.Chrome(config['webdriver_link'], options=options)
         self.login = config['login']
         self.password = config['password']
         self.page_number = page_number
@@ -72,6 +72,7 @@ class PNZGUParser(object):
         employer_data = self.get_employer_data()
 
         if employer_data != self.skip:
+            print('parsed', string_id)
             self.create_file(string_id, employer_data)
 
     def open_employer_rating(self, string_id):
